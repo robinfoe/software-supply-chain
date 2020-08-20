@@ -17,19 +17,12 @@ spec:
     command:
     - cat
     tty: true
-    volumeMounts:
-      - name: maven-repo
-        mountPath: /root/.m2
   - name: nodejs
     image: node:14.2-alpine
     imagePullPolicy: IfNotPresent
     command:
     - cat
     tty: true        
-  volumes:
-    - name: maven-repo
-      persistentVolumeClaim:
-        claimName: maven-storage
 """
     }
   }
