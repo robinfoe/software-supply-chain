@@ -1,6 +1,5 @@
-node{
 
-def util = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
+
 
 pipeline {
   agent { //maven:3.3.9-jdk-8-alpine
@@ -71,12 +70,15 @@ environment {
         steps{
             script {
 
-              util.sayHello()
+              
 
               sh 'pwd'
               sh 'ls -a'
               
             echo "${env.WORKSPACE}"
+            def util = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
+
+            util.sayHello()
 
             echo "${params.performDependencyCheck}"
               //Boolean.valueOf
@@ -85,6 +87,13 @@ environment {
         }
     } //end stag
 
+    stage('test'){
+      steps{
+        script{
+          util.sayHello()
+        }
+      }
+    }
     // stage('Stage - CI') {          
       
     //   steps {
@@ -131,7 +140,6 @@ environment {
 
 
 
-}
 
 
 
