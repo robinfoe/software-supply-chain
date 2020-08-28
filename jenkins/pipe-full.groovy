@@ -1,4 +1,6 @@
 
+def modules = [:]
+
 
 
 pipeline {
@@ -69,18 +71,10 @@ environment {
     stage('init... ') {
         steps{
             script {
+              modules.helper = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
+              modules.helper.sayHello()
 
-              
-
-              sh 'pwd'
-              sh 'ls -a'
-              
-            echo "${env.WORKSPACE}"
-            def util = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
-
-            util.sayHello()
-
-            echo "${params.performDependencyCheck}"
+            //echo "${params.performDependencyCheck}"
               //Boolean.valueOf
             
           }
@@ -90,7 +84,8 @@ environment {
     stage('test'){
       steps{
         script{
-          util.sayHello()
+          
+          modules.helper.sayHello()
         }
       }
     }
