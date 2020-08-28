@@ -1,4 +1,4 @@
-// def util = load("${env.WORKSPACE}/scripts/build_util.groovy")
+def util = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
 
 pipeline {
   agent { //maven:3.3.9-jdk-8-alpine
@@ -68,6 +68,8 @@ environment {
     stage('init... ') {
         steps{
             script {
+
+              util.sayHello()
 
               sh 'pwd'
               sh 'ls -a'

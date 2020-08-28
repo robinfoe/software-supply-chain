@@ -85,4 +85,9 @@ def getJarCoordinate(pomFolder, proxyPath){
 }
 
 
+def sayHello(){
+  echo "hello from helper"
+}
+
+
 return this
