@@ -123,11 +123,12 @@ environment {
       steps {
         script {
           container("maven"){
-            build(GIT_APP_FOLDER , PROXY_SETTINGS, buildNumber )
-            publish(GIT_APP_FOLDER , PROXY_SETTINGS)
+
+            modules.helper.build(GIT_APP_FOLDER , PROXY_SETTINGS, buildNumber )
+            modules.helper.publish(GIT_APP_FOLDER , PROXY_SETTINGS)
 
             // set this for return value
-            env.APP_COORDINATE=getJarCoordinate(GIT_APP_FOLDER , PROXY_SETTINGS)
+            env.APP_COORDINATE=modules.helper.getJarCoordinate(GIT_APP_FOLDER , PROXY_SETTINGS)
           }
         }
       } 
