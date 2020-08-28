@@ -1,6 +1,6 @@
 
 def modules = [:]
-
+def jobVar = [:]
 
 
 pipeline {
@@ -72,7 +72,7 @@ environment {
         steps{
             script {
               modules.helper = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
-              modules.helper.sayHello()
+              //modules.helper.sayHello()
 
             //echo "${params.performDependencyCheck}"
               //Boolean.valueOf
@@ -81,38 +81,30 @@ environment {
         }
     } //end stag
 
-    stage('test'){
-      steps{
-        script{
-          
-          modules.helper.sayHello()
+    
+    stage('Stage - CI') {          
+      
+      steps {
+        script {
+          def task = build (
+                      job: 'pipe-ci', 
+                      parameters: [
+                        string(name: 'appName', value: "${params.appName}"),
+                        string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+                        string(name: 'gitURL', value: "${params.gitURL}"),
+                        string(name: 'gitBranch', value: "${params.gitBranch}"),
+                        string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
+                        string(name: 'sonarUrl', value: "${params.sonarUrl}"),
+                        string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
+                        booleanParam(name: 'performDependencyCheck', value: "${params.performDependencyCheck}"),
+                        booleanParam(name: 'performCodeQualityCheck', value: "${params.performCodeQualityCheck}"),
+
+                      ]
+
+                    )
         }
       }
-    }
-    // stage('Stage - CI') {          
-      
-    //   steps {
-    //     script {
-    //       def task = build (
-    //                   job: 'pipe-ci', 
-    //                   parameters: [
-    //                     string(name: 'appName', value: "${params.appName}"),
-    //                     string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
-    //                     string(name: 'gitURL', value: "${params.gitURL}"),
-    //                     string(name: 'gitBranch', value: "${params.gitBranch}"),
-    //                     string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
-    //                     string(name: 'sonarUrl', value: "${params.sonarUrl}"),
-    //                     string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
-    //                     booleanParam(name: 'performDependencyCheck', value: "${params.performDependencyCheck}"),
-    //                     booleanParam(name: 'performCodeQualityCheck', value: "${params.performCodeQualityCheck}"),
-
-    //                   ]
-
-    //                 )
-
-    //     }
-    //   }
-    // }  //end stage
+    }  //end stage
 
 
     // stage('Stage - CB ') {
