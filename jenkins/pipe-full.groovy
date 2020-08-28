@@ -1,3 +1,5 @@
+node{
+
 def util = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
 
 pipeline {
@@ -127,6 +129,9 @@ environment {
 }
 
 
+
+
+}
 
 
 
