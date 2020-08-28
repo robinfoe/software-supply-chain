@@ -41,7 +41,7 @@ parameters {
     string(name: 'gitAppFolder', defaultValue: '', description: 'Application Root Folder, leave blank pom.xml is in Root directory')
 
     string(name: 'sonarUrl', defaultValue: 'http://sonarqube.pipeline.tanzu-no.de', description: 'Sonarqube URL')
-    string(name: 'mavenProxyFile', defaultValue: '/tmp/m2/tmp-nexus-proxy.xml', description: 'Location to settings.xml')
+    string(name: 'mavenProxyFile', defaultValue: '/tmp/m2/ivy-settings.xml', description: 'Location to settings.xml')
     
     booleanParam(name: 'performDependencyCheck', defaultValue: false, description: 'Perform app dependency checks ?')
     booleanParam(name: 'performCodeQualityCheck', defaultValue: false, description: 'Perform app code Quality checks ?')
