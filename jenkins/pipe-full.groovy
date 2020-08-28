@@ -1,4 +1,4 @@
-//def util = load("${env.WORKSPACE}/scripts/build_util.groovy")
+// def util = load("${env.WORKSPACE}/scripts/build_util.groovy")
 
 pipeline {
   agent { //maven:3.3.9-jdk-8-alpine
@@ -72,7 +72,7 @@ environment {
               sh 'pwd'
               sh 'ls -a'
               
-            echo "init... "
+            echo "${env.WORKSPACE}"
 
             echo "${params.performDependencyCheck}"
               //Boolean.valueOf
