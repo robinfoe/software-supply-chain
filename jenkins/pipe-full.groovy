@@ -28,6 +28,9 @@ parameters {
     choice(name: 'appType', choices: ['Java', 'Nodejs'], description: 'Type of application - Java / Nodejs')
     choice(name: 'typeOfBuild', choices: ['Dockerfile', 'Buildpack'], description: 'Choose the app build type,  default -  Dockerfile')
 
+    //IMAGE_PREFIX
+    string(name: 'imagePrefix', defaultValue: 'robinfoe', description: 'Image prefix ( Default point to dockerhub)')
+
     // GIT
     string(name: 'gitURL', defaultValue: 'https://github.com/robinfoe/bookstore-ms.git', description: 'Git Clone URL')
     string(name: 'gitBranch', defaultValue: 'master', description: 'git project for app')
@@ -72,11 +75,7 @@ environment {
         steps{
             script {
               modules.helper = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
-              //modules.helper.sayHello()
-
-            //echo "${params.performDependencyCheck}"
-              //Boolean.valueOf
-            
+              
           }
         }
     } //end stag
@@ -100,8 +99,42 @@ environment {
                         booleanParam(name: 'performCodeQualityCheck', value: "${params.performCodeQualityCheck}"),
 
                       ]
-
                     )
+
+
+          jobVar.appCoordinate = task.getBuildVariables().get('APP_COORDINATE')
+
+
+        }
+      }
+    }  //end stage
+
+
+    stage('Stage - CB') {          
+      
+      steps {
+        script {
+
+          def task = build (
+                      job: 'pipe-cb-dockerfile', 
+                      parameters: [
+                        string(name: 'appName', value: "${params.appName}"),
+                        string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+                        string(name: 'gitURL', value: "${params.gitURL}"),
+                        string(name: 'gitBranch', value: "${params.gitBranch}"),
+                        string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
+                        string(name: 'sonarUrl', value: "${params.sonarUrl}"),
+                        string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
+                        booleanParam(name: 'performDependencyCheck', value: "${params.performDependencyCheck}"),
+                        booleanParam(name: 'performCodeQualityCheck', value: "${params.performCodeQualityCheck}"),
+
+                      ]
+                    )
+
+
+          jobVar.appCoordinate = task.getBuildVariables().get('APP_COORDINATE')
+
+
         }
       }
     }  //end stage

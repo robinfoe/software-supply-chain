@@ -85,6 +85,13 @@ def getJarCoordinate(pomFolder, proxyPath){
 }
 
 
+
+def pullMavenArtifact(pomFolder, proxyPath, appCoordinate){
+  sh 'mkdir -p '+pomFolder+'/target'
+  sh mvncmd('', proxyPath) + ' dependency:get -Ddest=./'+pomFolder+'/target -Dartifact='+appCoordinate
+}
+
+
 def sayHello(){
   echo "hello from helper"
 }

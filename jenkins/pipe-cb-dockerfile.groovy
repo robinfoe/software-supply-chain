@@ -1,3 +1,4 @@
+def modules = [:]
 pipeline {
   agent {
     kubernetes {      
@@ -24,10 +25,23 @@ spec:
     volumeMounts:
     - name: mvn-proxy
       mountPath: /tmp/m2   
+
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug-v0.23.0
+    imagePullPolicy: IfNotPresent
+    command:  
+    - /busybox/cat
+    tty: true
+    volumeMounts:
+      - name: docker-config
+        mountPath: /kaniko/.docker
   volumes:
   - name: mvn-proxy
     configMap:
       name: nexus-mirror-cfg
+  - name: docker-config
+    configMap:
+      name: docker-config 
 """
     }
   }
@@ -37,7 +51,8 @@ parameters {
 
       // APP
     string(name: 'appName', defaultValue: 'book', description: 'Application Name')
-    string(name: 'imageTag', defaultValue: '01', description: 'Container Image Tag')
+    // string(name: 'imageTag', defaultValue: '01', description: 'Container Image Tag')
+    string(name: 'imagePrefix', defaultValue: 'robinfoe', description: 'Image prefix ( Default point to dockerhub)')
     
     string(name: 'buildNumber', defaultValue: '5', description: 'Build Number, propagated from parent task')
 
@@ -68,6 +83,8 @@ environment {
     stage('Grab Dockerfile from Git') {
         steps{
             script {
+              modules.helper = load("${env.WORKSPACE}/jenkins/utility/helper.groovy")
+
               checkout(
                   [
                     $class: 'GitSCM', 
@@ -84,18 +101,32 @@ environment {
             
           }
         }
-  } //end stag
+    } //end stag
 
 
-  stage('Grab jar from nexus') {          
-      
-      steps {
-        script {
-          container("maven"){
-            pullMavenArtifact( "${params.gitAppFolder}" , "${params.mavenProxyFile}" , "${params.appCoordinate}")
+    stage('Grab jar from nexus') {          
+        
+        steps {
+          script {
+            container("maven"){
+              modules.helper.pullMavenArtifact( "${params.gitAppFolder}" , "${params.mavenProxyFile}" , "${params.appCoordinate}")
           }
         }
       }
+    }  //end stage
+
+
+    stage('Build and Publish Container') {            
+      steps {
+        script {
+          container("kaniko"){
+
+            sh 'cd ${params.gitAppFolder}'
+            sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --insecure-registry --skip-tls-verify --insecure-pull --skip-tls-verify-pull --cache=false --destination="${params.imagePrefix}/${params.appName}:${params.buildNumber}" --verbosity=info'
+
+          }
+        }
+     }
     }  //end stage
         
 
@@ -104,40 +135,6 @@ environment {
 }
 
 
-def pullMavenArtifact(pomFolder, proxyPath, appCoordinate){
-
-  //sh mvncmd(pomFolder, proxyPath) + ' org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get -Dartifact=' + appCoordinate + ' -DoutputDirectory=${WORKSPACE}/'+pomFolder+'/target'
-
-  sh 'mkdir -p '+pomFolder+'/target'
-  sh mvncmd(pomFolder, proxyPath) + ' dependency:get -Ddest=./'+pomFolder+'/target -Dartifact='+appCoordinate
-  // sh mvncmd(pomFolder, proxyPath) + ' org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get -Dartifact=' + appCoordinate + ' -Ddest=${WORKSPACE}/'+pomFolder+'/target'
-
-
-  // sh 'pwd'
-  // // sh 'whoami'
-  // sh 'ls -a'
-  // sh 'ls -a '+pomFolder+'/'
-  // sh 'ls -a '+pomFolder+'/target'
-
-  // sh mvncmd(pomFolder, proxyPath) + ' clean package '
-  // sh mvncmd(pomFolder, proxyPath) + ' clean package '
-  // sh mvncmd(pomFolder, proxyPath) + ' clean package '
-  // sh mvncmd(pomFolder, proxyPath) + ' clean package '
-  // sh mvncmd(pomFolder, proxyPath) + ' clean package '
-  // sh 'mv *.jar '+pomFolder+'/target/'
-  
-  // sh 'sleep 5m'
-
-}
-
-
-def mvncmd(pomFolder, proxyPath){
-
-  // if(pomFolder?.trim()){
-  //    return "mvn -f ./"+pomFolder+"/pom.xml -s "+proxyPath+ " "
-  // }
-  return "mvn -s "+proxyPath+" "
-}
 
 
 
