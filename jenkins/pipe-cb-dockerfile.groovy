@@ -35,7 +35,7 @@ spec:
     volumeMounts:
       - name: docker-config
         mountPath: /kaniko/.docker
-        
+
   volumes:
   - name: mvn-proxy
     configMap:
@@ -122,6 +122,8 @@ environment {
         script {
           container("kaniko"){
 
+            sh 'cd ls -l'
+            sh 'pwd'
             sh 'cd ${params.gitAppFolder}'
             sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --insecure-registry --skip-tls-verify --insecure-pull --skip-tls-verify-pull --cache=false --destination="${params.imagePrefix}/${params.appName}:${params.buildNumber}" --verbosity=info'
 
