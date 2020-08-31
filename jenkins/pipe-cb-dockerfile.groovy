@@ -68,7 +68,7 @@ parameters {
 
 environment {
     APP_NAME = "${params.appImageName}"
-    buildNumber = "${params.buildNumber}"
+   // buildNumber = "${params.buildNumber}"
 
 
     GIT_URL = "${params.gitURL}" 
@@ -125,7 +125,9 @@ environment {
             sh 'ls -l'
             sh 'pwd'
             sh 'cd ${params.gitAppFolder}'
-            sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --insecure-registry --skip-tls-verify --insecure-pull --skip-tls-verify-pull --cache=false --destination="${params.imagePrefix}/${params.appName}:${params.buildNumber}" --verbosity=info'
+
+            sh 'ls -l'
+            sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --insecure-registry --skip-tls-verify --insecure-pull --skip-tls-verify-pull --cache=false --destination=${params.imagePrefix}/${params.appName}:${params.buildNumber} --verbosity=info'
 
           }
         }
