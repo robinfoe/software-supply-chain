@@ -59,7 +59,7 @@ def containerizeAndPush(gitAppFolder, imagePrefix, appName,  buildNumber){
 
   def kanikoParams = [
 
-    '-f `pwd`/'+gitAppFolder+' /Dockerfile',
+    '-f `pwd`/'+gitAppFolder+'/Dockerfile',
     '-c `pwd`/'+gitAppFolder,
 
     '--insecure',  
