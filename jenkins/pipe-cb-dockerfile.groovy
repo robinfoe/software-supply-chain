@@ -52,7 +52,7 @@ parameters {
       // APP
     string(name: 'appName', defaultValue: 'book', description: 'Application Name')
     // string(name: 'imageTag', defaultValue: '01', description: 'Container Image Tag')
-    string(name: 'imagePrefix', defaultValue: 'robinfoe', description: 'Image prefix ( Default point to dockerhub)')
+    string(name: 'imagePrefix', defaultValue: 'docker.io/robinfoe', description: 'Image prefix ( Default point to dockerhub)')
     
     string(name: 'buildNumber', defaultValue: '5', description: 'Build Number, propagated from parent task')
 
