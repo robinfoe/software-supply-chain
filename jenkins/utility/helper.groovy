@@ -50,9 +50,13 @@ def containerizeAndPush(imagePrefix, appName,  buildNumber){
 
   echo 'here... containerizeAndPush'
 
+  sh 'ls -l'
+
+  sh 'pwd'
+
   def imageLoc=imagePrefix+'/'+appName+':'+buildNumber
   echo imageLoc
-  
+
   def kanikoParams = [
 
     '-f `pwd`/Dockerfile',
