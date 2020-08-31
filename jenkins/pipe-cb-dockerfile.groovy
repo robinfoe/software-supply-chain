@@ -122,10 +122,10 @@ environment {
         script {
           container("kaniko"){
 
-            echo params.gitAppFolder
+            // echo params.gitAppFolder
 
-            sh 'cd ' + params.gitAppFolder
-            modules.helper.containerizeAndPush( "${params.imagePrefix}" , "${params.appName}" , "${params.buildNumber}" )
+            // sh 'cd ' + params.gitAppFolder
+            modules.helper.containerizeAndPush( "${params.gitAppFolder}", "${params.imagePrefix}" , "${params.appName}" , "${params.buildNumber}" )
 
           }
         }

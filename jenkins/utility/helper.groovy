@@ -46,7 +46,7 @@ def runCodeQualityCheck(pomFolder, proxyPath,  appName, buildNumber){
 }
 
 
-def containerizeAndPush(imagePrefix, appName,  buildNumber){
+def containerizeAndPush(gitAppFolder, imagePrefix, appName,  buildNumber){
 
   echo 'here... containerizeAndPush'
 
@@ -59,8 +59,8 @@ def containerizeAndPush(imagePrefix, appName,  buildNumber){
 
   def kanikoParams = [
 
-    '-f `pwd`/Dockerfile',
-    '-c `pwd`',
+    '-f `pwd`/'+gitAppFolder+' /Dockerfile',
+    '-c `pwd`/'+gitAppFolder,
 
     '--insecure',  
     '--insecure-registry',
