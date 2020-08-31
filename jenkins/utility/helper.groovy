@@ -48,7 +48,11 @@ def runCodeQualityCheck(pomFolder, proxyPath,  appName, buildNumber){
 
 def containerizeAndPush(imagePrefix, appName,  buildNumber){
 
+  echo 'here... containerizeAndPush'
+
   def imageLoc=imagePrefix+'/'+appName+':'+buildNumber
+  echo imageLoc
+  
   def kanikoParams = [
 
     '-f `pwd`/Dockerfile',
@@ -65,6 +69,9 @@ def containerizeAndPush(imagePrefix, appName,  buildNumber){
     
     '--verbosity=info'
   ]
+
+  echo kanikoParams.join(' ')
+
 
   sh '/kaniko/executor ' + kanikoParams.join(' ')
 
