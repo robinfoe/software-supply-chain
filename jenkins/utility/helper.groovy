@@ -19,9 +19,9 @@ def mvncmd(pomFolder, proxyPath){
 def runCodeQualityCheck(pomFolder, proxyPath,  appName, buildNumber){
 
   def sonarParams = [
-    '-Dsonar.projectName=${appName}',
-    '-Dsonar.projectVersion=${buildNumber}',
-    '-Dsonar.projectKey=${appName}:app',
+    '-Dsonar.projectName='+appName,
+    '-Dsonar.projectVersion='+buildNumber,
+    '-Dsonar.projectKey='+appName+':app',
     
     '-Dsonar.scm.disabled=true',
     '-Dsonar.sources=src/main',
@@ -44,6 +44,32 @@ def runCodeQualityCheck(pomFolder, proxyPath,  appName, buildNumber){
  sh mvncmd(pomFolder, proxyPath) + ' package sonar:sonar ' + sonarParams.join(' ')
 
 }
+
+
+def containerizeAndPush(imagePrefix, appName,  buildNumber){
+
+  def imageLoc=imagePrefix+'/'+appName+':'+buildNumber
+  def kanikoParams = [
+
+    '-f `pwd`/Dockerfile',
+    '-c `pwd`',
+
+    '--insecure',  
+    '--insecure-registry',
+    '--skip-tls-verify',
+    '--insecure-pull',
+    '--skip-tls-verify-pull',
+    '--cache=false',
+    
+    '--destination="' + imageLoc  + '"',
+    
+    '--verbosity=info'
+  ]
+
+  sh '/kaniko/executor ' + kanikoParams.join(' ')
+
+}
+
 
 
 def build(pomFolder, proxyPath,buildNumber){
