@@ -35,6 +35,7 @@ spec:
     volumeMounts:
       - name: docker-config
         mountPath: /kaniko/.docker
+        
   volumes:
   - name: mvn-proxy
     configMap:
@@ -54,14 +55,14 @@ parameters {
     // string(name: 'imageTag', defaultValue: '01', description: 'Container Image Tag')
     string(name: 'imagePrefix', defaultValue: 'docker.io/robinfoe', description: 'Image prefix ( Default point to dockerhub)')
     
-    string(name: 'buildNumber', defaultValue: '5', description: 'Build Number, propagated from parent task')
+    string(name: 'buildNumber', defaultValue: '67', description: 'Build Number, propagated from parent task')
 
     // GIT
     string(name: 'gitURL', defaultValue: 'https://github.com/robinfoe/bookstore-ms.git', description: 'Git Clone URL')
     string(name: 'gitBranch', defaultValue: 'master', description: 'git project for app')
     string(name: 'gitAppFolder', defaultValue: 'book', description: 'Application Root Folder, leave blank pom.xml is in Root directory')
 
-    string(name: 'mavenProxyFile', defaultValue: '/tmp/m2/tmp-nexus-proxy.xml', description: 'Location to settings.xml')
+    string(name: 'mavenProxyFile', defaultValue: '/tmp/m2/ivy-settings.xml', description: 'Location to settings.xml')
     string(name: 'appCoordinate', defaultValue: 'com.vmware.sample.istio:book:1.0-SNAPSHOT-67', description: 'Location to settings.xml')
 }  
 
