@@ -125,7 +125,7 @@ environment {
             echo params.gitAppFolder
 
             sh 'cd ' + params.gitAppFolder
-            moduler.helper.containerizeAndPush( "${params.imagePrefix}" , "${params.appName}" , "${params.buildNumber}" )
+            modules.helper.containerizeAndPush( "${params.imagePrefix}" , "${params.appName}" , "${params.buildNumber}" )
 
           }
         }
