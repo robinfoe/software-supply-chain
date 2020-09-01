@@ -36,7 +36,7 @@ parameters {
     string(name: 'buildNumber', defaultValue: '0', description: 'Build Number, propagated from parent task')
 
     // GIT
-    string(name: 'gitURL', defaultValue: 'https://github.com/robinfoe/bookstore-ms.git', description: 'Git Clone URL')
+    string(name: 'gitURL', defaultValue: 'http://gitea.pipeline.tanzu-no.de/ivy/bookstore-ms.git', description: 'Git Clone URL')
     string(name: 'gitBranch', defaultValue: 'master', description: 'git project for app')
     string(name: 'gitAppFolder', defaultValue: '', description: 'Application Root Folder, leave blank pom.xml is in Root directory')
 

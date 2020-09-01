@@ -35,7 +35,7 @@ parameters {
     string(name: 'imagePrefix', defaultValue: 'docker.io/robinfoe', description: 'Image prefix ( Default point to dockerhub)')
 
     // GIT
-    string(name: 'gitURL', defaultValue: 'http://gitea.pipeline.tanzu-no.de/ivy/software-supply/bookstore-ms.git', description: 'Git Clone URL')
+    string(name: 'gitURL', defaultValue: 'http://gitea.pipeline.tanzu-no.de/ivy/bookstore-ms.git', description: 'Git Clone URL')
     string(name: 'gitBranch', defaultValue: 'ivy-1.0', description: 'git project for app')
     string(name: 'gitAppFolder', defaultValue: 'book', description: 'Application Root Folder, leave blank pom.xml is in Root directory')
     string(name: 'kubeResourceFolder', defaultValue: 'kubernetes', description: 'Kubernetes resource folder in the source code')
