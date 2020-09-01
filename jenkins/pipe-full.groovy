@@ -2,6 +2,8 @@
 def modules = [:]
 def jobVar = [:]
 
+def proceedToProduction = false
+
 
 pipeline {
   agent { //maven:3.3.9-jdk-8-alpine
@@ -125,7 +127,7 @@ parameters {
 
           // echo jobVar.appCoordinate
           def task = build (
-                      job: 'pipe-cb-dockerfile', 
+                      job: 'pipe-cd', 
                       parameters: [
                         string(name: 'appName', value: params.appName),
                         string(name: 'imagePrefix', value: params.imagePrefix),
@@ -143,6 +145,52 @@ parameters {
                         string(name: 'gitAppFolder', value: params.gitAppFolder )
                       ]
                     )
+
+
+
+
+          try{
+
+              timeout(time: 1, unit: 'HOURS') { 
+                proceedToProduction = input(
+                    id: 'Proceed1', message: 'Deploy to Production ?', parameters: [
+                    [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you sure to proceed']
+                  ])
+              }
+            }catch(Exception e){
+              proceedToProduction = false
+            }
+        }
+      }
+    } //end stage 
+
+
+    stage('Stage - CD - Prod ') {
+      steps {
+        script {
+          echo 'Proceed to production'
+          echo proceedToProduction
+
+          // echo jobVar.appCoordinate
+          // def task = build (
+          //             job: 'pipe-cd', 
+          //             parameters: [
+          //               string(name: 'appName', value: params.appName),
+          //               string(name: 'imagePrefix', value: params.imagePrefix),
+
+          //               string(name: 'appUrlSuffix', value: params.appUrlSuffix),
+          //               string(name: 'namespacePrefix', value: params.namespacePrefix),
+          //               string(name: 'deployEnvironment', value: "sit"),
+          //               string(name: 'kubeResourceFolder', value: params.kubeResourceFolder),
+                        
+          //               // string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+          //               string(name: 'buildNumber', value: "14"),
+                        
+          //               string(name: 'gitURL', value: params.gitURL ),
+          //               string(name: 'gitBranch', value: params.gitBranch ),
+          //               string(name: 'gitAppFolder', value: params.gitAppFolder )
+          //             ]
+          //           )
 
         }
       }
