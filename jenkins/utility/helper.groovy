@@ -184,7 +184,7 @@ def deployKubeResource(kubeConstructFolder, namespace ,appName){
 
   }
 
-  sh 'kubectl wait -n ' + namespace + ' --for=condition=Ready pods --selector app='+appName+' --timeout=1200 ' 
+  // sh 'kubectl wait -n ' + namespace + ' --for=condition=Ready pods --selector app='+appName+' --timeout=1200 ' 
 }
 
 

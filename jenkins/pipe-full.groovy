@@ -151,7 +151,7 @@ parameters {
 
           try{
 
-              timeout(time: 1, unit: 'HOURS') { 
+              timeout(time: 30, unit: 'MINUTES') { 
                 proceedToProduction = input(
                     id: 'Proceed1', message: 'Deploy to Production ?', parameters: [
                     [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you sure to proceed']
@@ -168,29 +168,29 @@ parameters {
     stage('Stage - CD - Prod ') {
       steps {
         script {
-          echo 'Proceed to production'
-          echo proceedToProduction
 
-          // echo jobVar.appCoordinate
-          // def task = build (
-          //             job: 'pipe-cd', 
-          //             parameters: [
-          //               string(name: 'appName', value: params.appName),
-          //               string(name: 'imagePrefix', value: params.imagePrefix),
+          when { expression { proceedToProduction  } } 
+          
+          echo jobVar.appCoordinate
+          def task = build (
+                      job: 'pipe-cd', 
+                      parameters: [
+                        string(name: 'appName', value: params.appName),
+                        string(name: 'imagePrefix', value: params.imagePrefix),
 
-          //               string(name: 'appUrlSuffix', value: params.appUrlSuffix),
-          //               string(name: 'namespacePrefix', value: params.namespacePrefix),
-          //               string(name: 'deployEnvironment', value: "sit"),
-          //               string(name: 'kubeResourceFolder', value: params.kubeResourceFolder),
+                        string(name: 'appUrlSuffix', value: params.appUrlSuffix),
+                        string(name: 'namespacePrefix', value: params.namespacePrefix),
+                        string(name: 'deployEnvironment', value: "prod"),
+                        string(name: 'kubeResourceFolder', value: params.kubeResourceFolder),
                         
-          //               // string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
-          //               string(name: 'buildNumber', value: "14"),
+                        // string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+                        string(name: 'buildNumber', value: "14"),
                         
-          //               string(name: 'gitURL', value: params.gitURL ),
-          //               string(name: 'gitBranch', value: params.gitBranch ),
-          //               string(name: 'gitAppFolder', value: params.gitAppFolder )
-          //             ]
-          //           )
+                        string(name: 'gitURL', value: params.gitURL ),
+                        string(name: 'gitBranch', value: params.gitBranch ),
+                        string(name: 'gitAppFolder', value: params.gitAppFolder )
+                      ]
+                    )
 
         }
       }
