@@ -62,61 +62,61 @@ parameters {
     } //end stag
 
     
-    stage('Stage - CI') {          
+    // stage('Stage - CI') {          
       
-      steps {
-        script {
-          def task = build (
-                      job: 'pipe-ci', 
-                      parameters: [
-                        string(name: 'appName', value: "${params.appName}"),
-                        string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
-                        string(name: 'gitURL', value: "${params.gitURL}"),
-                        string(name: 'gitBranch', value: "${params.gitBranch}"),
-                        string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
-                        string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
+    //   steps {
+    //     script {
+    //       def task = build (
+    //                   job: 'pipe-ci', 
+    //                   parameters: [
+    //                     string(name: 'appName', value: "${params.appName}"),
+    //                     string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+    //                     string(name: 'gitURL', value: "${params.gitURL}"),
+    //                     string(name: 'gitBranch', value: "${params.gitBranch}"),
+    //                     string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
+    //                     string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
                         
-                        booleanParam(name: 'performDependencyCheck', value: "${params.performDependencyCheck}"),
-                        booleanParam(name: 'performCodeQualityCheck', value: "${params.performCodeQualityCheck}"),
-                      ]
-                    )
+    //                     booleanParam(name: 'performDependencyCheck', value: "${params.performDependencyCheck}"),
+    //                     booleanParam(name: 'performCodeQualityCheck', value: "${params.performCodeQualityCheck}"),
+    //                   ]
+    //                 )
 
-          jobVar.appCoordinate = task.getBuildVariables().get('APP_COORDINATE')
-
-
-        }
-      }
-    }  //end stage
+    //       jobVar.appCoordinate = task.getBuildVariables().get('APP_COORDINATE')
 
 
-    stage('Stage - CB') {          
+    //     }
+    //   }
+    // }  //end stage
+
+
+    // stage('Stage - CB') {          
       
-      steps {
-        script {
+    //   steps {
+    //     script {
 
-          // echo jobVar.appCoordinate
-          def task = build (
-                      job: 'pipe-cb-dockerfile', 
-                      parameters: [
-                        string(name: 'appName', value: "${params.appName}"),
-                        string(name: 'imagePrefix', value: "${params.imagePrefix}"),
+    //       // echo jobVar.appCoordinate
+    //       def task = build (
+    //                   job: 'pipe-cb-dockerfile', 
+    //                   parameters: [
+    //                     string(name: 'appName', value: "${params.appName}"),
+    //                     string(name: 'imagePrefix', value: "${params.imagePrefix}"),
                         
-                        string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+    //                     string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
                         
-                        string(name: 'gitURL', value: "${params.gitURL}"),
-                        string(name: 'gitBranch', value: "${params.gitBranch}"),
-                        string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
+    //                     string(name: 'gitURL', value: "${params.gitURL}"),
+    //                     string(name: 'gitBranch', value: "${params.gitBranch}"),
+    //                     string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
                         
-                        string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
-                        string(name: 'appCoordinate', value: jobVar.appCoordinate ),
+    //                     string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
+    //                     string(name: 'appCoordinate', value: jobVar.appCoordinate ),
                         
                   
-                      ]
-                    )
+    //                   ]
+    //                 )
 
-        }
-      }
-    }  //end stage
+    //     }
+    //   }
+    // }  //end stage
 
 
     stage('Stage - CD - SIT ') {
