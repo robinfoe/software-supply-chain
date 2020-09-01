@@ -25,7 +25,9 @@ parameters {
 
     // APP
     string(name: 'appName', defaultValue: 'book', description: 'Application Name')
-    choice(name: 'appType', choices: ['Java', 'Nodejs'], description: 'Type of application - Java / Nodejs')
+    // choice(name: 'appType', choices: ['Java', 'Nodejs'], description: 'Type of application - Java / Nodejs')
+    string(name: 'appUrlSuffix', defaultValue: '.app.pipeline.ivy.tanzu-no.de', description: 'URL Suffix')
+    string(name: 'namespacePrefix', defaultValue: 'tanzu-app-pipeline', description: 'Namespace prefix for application')
     // choice(name: 'typeOfBuild', choices: ['Dockerfile', 'Buildpack'], description: 'Choose the app build type,  default -  Dockerfile')
 
     //IMAGE_PREFIX
@@ -35,6 +37,7 @@ parameters {
     string(name: 'gitURL', defaultValue: 'https://github.com/robinfoe/bookstore-ms.git', description: 'Git Clone URL')
     string(name: 'gitBranch', defaultValue: 'master', description: 'git project for app')
     string(name: 'gitAppFolder', defaultValue: 'book', description: 'Application Root Folder, leave blank pom.xml is in Root directory')
+    string(name: 'kubeResourceFolder', defaultValue: 'kubernetes', description: 'Kubernetes resource folder in the source code')
 
     // string(name: 'sonarUrl', defaultValue: 'http://sonarqube.pipeline.tanzu-no.de', description: 'Sonarqube URL')
     string(name: 'mavenProxyFile', defaultValue: '/tmp/m2/ivy-settings.xml', description: 'Location to settings.xml')
@@ -91,8 +94,7 @@ parameters {
       steps {
         script {
 
-          echo jobVar.appCoordinate
-
+          // echo jobVar.appCoordinate
           def task = build (
                       job: 'pipe-cb-dockerfile', 
                       parameters: [
@@ -117,17 +119,34 @@ parameters {
     }  //end stage
 
 
-    // stage('Stage - CB ') {
-    //   when {environment name: "PERFORM_CODE_CHK", value: "true"}
+    stage('Stage - CD - SIT ') {
+      steps {
+        script {
 
-    //   steps {
-    //     script {
-    //         container("maven"){
-    //             runCodeQualityCheck( GIT_APP_FOLDER , PROXY_SETTINGS , APP_NAME, buildNumber )
-    //         }
-    //     }
-    //   }
-    // } //end stage 
+          // echo jobVar.appCoordinate
+          def task = build (
+                      job: 'pipe-cb-dockerfile', 
+                      parameters: [
+                        string(name: 'appName', value: params.appName),
+                        string(name: 'imagePrefix', value: params.imagePrefix),
+
+                        string(name: 'appUrlSuffix', value: params.appUrlSuffix),
+                        string(name: 'namespacePrefix', value: params.namespacePrefix),
+                        string(name: 'deployEnvironment', value: "sit"),
+                        string(name: 'kubeResourceFolder', value: params.kubeResourceFolder),
+                        
+                        // string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+                        string(name: 'buildNumber', value: "14"),
+                        
+                        string(name: 'gitURL', value: params.gitURL ),
+                        string(name: 'gitBranch', value: params.gitBranch ),
+                        string(name: 'gitAppFolder', value: params.gitAppFolder )
+                      ]
+                    )
+
+        }
+      }
+    } //end stage 
 
 
 
