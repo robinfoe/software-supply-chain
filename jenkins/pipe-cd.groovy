@@ -130,7 +130,7 @@ parameters {
           container('kubectl'){
               script {
 
-                def namespace = generateNamespace(params.namespacePrefix , params.deployEnvironment)
+                def namespace = modules.helper.generateNamespace(params.namespacePrefix , params.deployEnvironment)
                 def kubeConstructFolder = params.gitAppFolder+ '/'+ params.kubeResourceFolder
                 modules.helper.deployKubeResource(kubeConstructFolder, namespace, params.appName)
 
