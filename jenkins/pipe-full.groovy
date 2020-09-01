@@ -35,8 +35,8 @@ parameters {
     string(name: 'imagePrefix', defaultValue: 'docker.io/robinfoe', description: 'Image prefix ( Default point to dockerhub)')
 
     // GIT
-    string(name: 'gitURL', defaultValue: 'https://github.com/robinfoe/bookstore-ms.git', description: 'Git Clone URL')
-    string(name: 'gitBranch', defaultValue: 'master', description: 'git project for app')
+    string(name: 'gitURL', defaultValue: 'http://gitea.pipeline.tanzu-no.de/ivy/software-supply/bookstore-ms.git', description: 'Git Clone URL')
+    string(name: 'gitBranch', defaultValue: 'ivy-1.0', description: 'git project for app')
     string(name: 'gitAppFolder', defaultValue: 'book', description: 'Application Root Folder, leave blank pom.xml is in Root directory')
     string(name: 'kubeResourceFolder', defaultValue: 'kubernetes', description: 'Kubernetes resource folder in the source code')
 
@@ -135,8 +135,8 @@ parameters {
                         string(name: 'deployEnvironment', value: "sit"),
                         string(name: 'kubeResourceFolder', value: params.kubeResourceFolder),
                         
-                        // string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
-                        string(name: 'buildNumber', value: "14"),
+                        string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+                        // string(name: 'buildNumber', value: "14"),
                         
                         string(name: 'gitURL', value: params.gitURL ),
                         string(name: 'gitBranch', value: params.gitBranch ),
@@ -178,8 +178,8 @@ parameters {
                         string(name: 'deployEnvironment', value: "prod"),
                         string(name: 'kubeResourceFolder', value: params.kubeResourceFolder),
                         
-                        // string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
-                        string(name: 'buildNumber', value: "14"),
+                        string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+                        // string(name: 'buildNumber', value: "14"),
                         
                         string(name: 'gitURL', value: params.gitURL ),
                         string(name: 'gitBranch', value: params.gitBranch ),
