@@ -40,7 +40,6 @@ parameters {
     string(name: 'gitBranch', defaultValue: 'master', description: 'git project for app')
     string(name: 'gitAppFolder', defaultValue: '', description: 'Application Root Folder, leave blank pom.xml is in Root directory')
 
-    string(name: 'sonarUrl', defaultValue: 'http://sonarqube.pipeline.tanzu-no.de', description: 'Sonarqube URL')
     string(name: 'mavenProxyFile', defaultValue: '/tmp/m2/ivy-settings.xml', description: 'Location to settings.xml')
     
     booleanParam(name: 'performDependencyCheck', defaultValue: false, description: 'Perform app dependency checks ?')
@@ -49,21 +48,8 @@ parameters {
 
 environment {
 
-    APP_NAME = "${params.appName}"
-    buildNumber = "${params.buildNumber}"
-    
-    GIT_URL = "${params.gitURL}" 
-    GIT_BRANCH = "${params.gitBranch}"
-    GIT_APP_FOLDER = "${params.gitAppFolder}"
-
-    GIT_CRED = "gogscred"
-    
-    // inject from properties file
-    SONAR_URL = "${sonarUrl}"
-
     PERFORM_DEP_CHK = "${params.performDependencyCheck}"
     PERFORM_CODE_CHK = "${params.performCodeQualityCheck}"
-    PROXY_SETTINGS="${mavenProxyFile}"
   }
 
   stages {
@@ -76,14 +62,14 @@ environment {
               checkout(
                   [
                     $class: 'GitSCM', 
-                    branches: [[name: "*/${GIT_BRANCH}"]],
+                    branches: [[name: "*/${params.gitBranch}"]],
 
                     doGenerateSubmoduleConfigurations: false, extensions: [], 
                       submoduleCfg: [], 
                       userRemoteConfigs: [
                           [
                           //  credentialsId: "${GIT_CRED}", 
-                            url: "${GIT_URL}"
+                            url: "${params.gitURL}"
                           ]
                       ]
                   ]
@@ -99,7 +85,7 @@ environment {
       steps {
         script {
           container("maven"){
-            modules.helper.runDependencyScan( GIT_APP_FOLDER , PROXY_SETTINGS)
+            modules.helper.runDependencyScan( params.gitAppFolder , params.mavenProxyFile )
           }
         }
       }
@@ -112,7 +98,8 @@ environment {
       steps {
         script {
             container("maven"){
-              modules.helper.runCodeQualityCheck( GIT_APP_FOLDER , PROXY_SETTINGS , APP_NAME, buildNumber )
+              modules.helper.runCodeQualityCheck( params.gitAppFolder , params.mavenProxyFile , 
+                                                    params.appName, params.buildNumber )
             }
         }
       }
@@ -124,11 +111,11 @@ environment {
         script {
           container("maven"){
 
-            modules.helper.build(GIT_APP_FOLDER , PROXY_SETTINGS, buildNumber )
-            modules.helper.publish(GIT_APP_FOLDER , PROXY_SETTINGS)
+            modules.helper.build( params.gitAppFolder , params.mavenProxyFile, params.buildNumber )
+            modules.helper.publish( params.gitAppFolder , params.mavenProxyFile)
 
             // set this for return value
-            env.APP_COORDINATE=modules.helper.getJarCoordinate(GIT_APP_FOLDER , PROXY_SETTINGS)
+            env.APP_COORDINATE=modules.helper.getJarCoordinate( params.gitAppFolder , params.mavenProxyFile)
           }
         }
       } 

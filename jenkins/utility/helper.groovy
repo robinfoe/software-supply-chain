@@ -48,15 +48,10 @@ def runCodeQualityCheck(pomFolder, proxyPath,  appName, buildNumber){
 
 def containerizeAndPush(gitAppFolder, imagePrefix, appName,  buildNumber){
 
-  echo 'here... containerizeAndPush'
-
   sh 'ls -l'
-
   sh 'pwd'
 
   def imageLoc=imagePrefix+'/'+appName+':'+buildNumber
-  echo imageLoc
-
   def kanikoParams = [
 
     '-f `pwd`/'+gitAppFolder+'/Dockerfile',
@@ -74,11 +69,7 @@ def containerizeAndPush(gitAppFolder, imagePrefix, appName,  buildNumber){
     '--verbosity=info'
   ]
 
-  echo kanikoParams.join(' ')
-
-
   sh '/kaniko/executor ' + kanikoParams.join(' ')
-
 }
 
 
@@ -92,7 +83,6 @@ def build(pomFolder, proxyPath,buildNumber){
   ).trim()
 
   appVersion = appVersion + "-" + buildNumber
-  echo appVersion
 
   // execute version change before perform buil 
   sh cmd + " versions:set -DnewVersion=" + appVersion
@@ -121,12 +111,115 @@ def getJarCoordinate(pomFolder, proxyPath){
 
 }
 
-
-
 def pullMavenArtifact(pomFolder, proxyPath, appCoordinate){
   sh 'mkdir -p '+pomFolder+'/target'
   sh mvncmd('', proxyPath) + ' dependency:get -Ddest=./'+pomFolder+'/target -Dartifact='+appCoordinate
 }
+
+
+
+def retagImage(fromImage , toImage){
+  // call within kaniko container 
+  def kanikoParams = [
+
+    '--dockerfile /dev/stdin',
+    '--insecure',  
+    '--insecure-registry',
+    '--skip-tls-verify',
+    '--insecure-pull',
+    '--skip-tls-verify-pull',
+    '--cache=false',
+    
+    '--destination="' + toImage  + '"',
+    
+    '--verbosity=info'
+  ]
+
+  sh 'echo "FROM '+fromImage+'" | /kaniko/executor ' + kanikoParams.join(' ')
+
+}
+
+
+
+def generateKubeResource(appFolder, kubeFolder, imagePrefix, appName, buildNumber,appUrlSuffix, deployEnvironment ){
+  // call within kaniko container 
+  def imageURL = generateImageTag(imagePrefix, appName, buildNumber, deployEnvironment)
+  def appURL = generateAppURL(appName, appUrlSuffix, deployEnvironment)
+
+  sh 'ls -l '+appFolder+'/'+kubeFolder
+  sh 'whoami'
+  //sh 'ls -l ${appFolder}/${kubeFolder}'
+
+  def sourceoutput = sh returnStdout: true, script: 'ls '+appFolder
+
+  if(sourceoutput.contains( kubeFolder )){
+
+    def yalmConstruct = readYaml file: "${appFolder}/${kubeFolder}/deployment.yaml"
+    sh "rm ${appFolder}/${kubeFolder}/deployment.yaml"
+    yalmConstruct.spec.template.spec.containers[0].image = imageURL
+    writeYaml file: "${appFolder}/${kubeFolder}/deployment.yaml", data: yalmConstruct
+
+
+
+    yalmConstruct = readYaml file: "${appFolder}/${kubeFolder}/ingress.yaml"
+    sh "rm ${appFolder}/${kubeFolder}/ingress.yaml"
+    yalmConstruct.spec.rules[0].host = appURL
+    writeYaml file: "${appFolder}/${kubeFolder}/ingress.yaml", data: yalmConstruct
+
+  }
+}
+ 
+def deployKubeResource(kubeConstructFolder, namespace ,appName){
+
+  def sourceoutput = sh returnStdout: true, script: 'ls '+kubeConstructFolder
+  
+  def files = sourceoutput.split('\n')
+  for(file in files){
+  
+    try{
+        sh 'kubectl delete --wait=true --timeout=3600s -n ' + namespace + ' -f ' +kubeConstructFolder + '/'+file
+    }catch(Exception e){/** IGNORED **/}
+    sh 'kubectl create -n ' + namespace + ' -f ' +kubeConstructFolder + '/' + file
+
+  }
+
+  sh 'kubectl wait -n ' + namespace + ' --for=condition=Ready pods --selector app='+appName+' --timeout=3600s ' 
+}
+
+
+def isSIT(deployEnvironment){
+  return "sit".equals(deployEnvironment)
+}
+
+def generateNamespace(namespacePrefix, deployEnvironment){
+
+   if ( isSIT(deployEnvironment) ) {
+    return namespacePrefix + "-sit"  
+  }else{
+    return namespacePrefix + "-prod"  
+  }
+
+}
+
+def generateAppURL(appName, appUrlSuffix, deployEnvironment){
+
+  if ( isSIT(deployEnvironment) ) {
+    return appName + ".sit" + appUrlSuffix 
+  }else{
+    return appName + ".prod" + appUrlSuffix 
+  }
+}
+
+def generateImageTag(imagePrefix, appName, buildNumber, deployEnvironment){
+
+  if ( isSIT(deployEnvironment) ) {
+    return imagePrefix + "/" + appName + ":" + buildNumber
+  }else{
+    return imagePrefix + "/" + appName + ":prod-" + buildNumber
+  }
+
+}
+
 
 
 def sayHello(){
