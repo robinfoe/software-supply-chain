@@ -166,10 +166,11 @@ parameters {
 
 
     stage('Stage - CD - Prod ') {
+      when { expression { proceedToProduction  } } 
       steps {
         script {
 
-          when { expression { proceedToProduction  } } 
+          
           
           echo jobVar.appCoordinate
           def task = build (
