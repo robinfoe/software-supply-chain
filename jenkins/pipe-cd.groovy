@@ -115,8 +115,8 @@ parameters {
           container('kaniko'){
 
             script{
-              def fromImage = generateImageTag(params.imagePrefix, params.appName, params.buildNumber, "sit")
-              def toImage = generateImageTag(params.imagePrefix, params.appName, params.buildNumber, params.deployEnvironment)
+              def fromImage = modules.helper.generateImageTag(params.imagePrefix, params.appName, params.buildNumber, "sit")
+              def toImage = modules.helper.generateImageTag(params.imagePrefix, params.appName, params.buildNumber, params.deployEnvironment)
               modules.helper.retagImage(fromImage , toImage)
             }
 
