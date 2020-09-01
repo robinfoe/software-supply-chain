@@ -105,7 +105,7 @@ def getJarCoordinate(pomFolder, proxyPath){
 
   def cmd = mvncmd(pomFolder, proxyPath)
   def appVersion = sh (
-    script : cmd + " -q -Dexec.executable=echo  -Dexec.args='\${project.groupId}:\${project.artifactId}:\${project.version}' --non-recursive exec:exec", 
+    script : cmd + " -q -Dexec.executable=echo  -Dexec.args='''\${project.groupId}:\${project.artifactId}:\${project.version}''' --non-recursive exec:exec", 
     returnStdout: true
   ).trim()
 
