@@ -40,8 +40,8 @@ parameters {
     string(name: 'mavenProxyFile', defaultValue: '/tmp/m2/ivy-settings.xml', description: 'Location to settings.xml')
     
     
-    booleanParam(name: 'performDependencyCheck', defaultValue: true, description: 'Perform app dependency checks ?')
-    booleanParam(name: 'performCodeQualityCheck', defaultValue: true, description: 'Perform app code Quality checks ?')
+    booleanParam(name: 'performDependencyCheck', defaultValue: false, description: 'Perform app dependency checks ?')
+    booleanParam(name: 'performCodeQualityCheck', defaultValue: false, description: 'Perform app code Quality checks ?')
     // booleanParam(name: 'performImageBuild', defaultValue: false, description: 'Flag to trigger app image build')
     // booleanParam(name: 'performDevDeployment', defaultValue: false, description: 'Flag to trigger app deployment')
 }  
@@ -93,25 +93,24 @@ parameters {
 
           echo jobVar.appCoordinate
 
-          // def task = build (
-          //             job: 'pipe-cb-dockerfile', 
-          //             parameters: [
-          //               string(name: 'appName', value: "${params.appName}"),
-          //               string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
-          //               string(name: 'gitURL', value: "${params.gitURL}"),
-          //               string(name: 'gitBranch', value: "${params.gitBranch}"),
-          //               string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
-          //               string(name: 'sonarUrl', value: "${params.sonarUrl}"),
-          //               string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
-          //               booleanParam(name: 'performDependencyCheck', value: "${params.performDependencyCheck}"),
-          //               booleanParam(name: 'performCodeQualityCheck', value: "${params.performCodeQualityCheck}"),
-
-          //             ]
-          //           )
-
-
-          // jobVar.appCoordinate = task.getBuildVariables().get('APP_COORDINATE')
-
+          def task = build (
+                      job: 'pipe-cb-dockerfile', 
+                      parameters: [
+                        string(name: 'appName', value: "${params.appName}"),
+                        string(name: 'imagePrefix', value: "${params.imagePrefix}"),
+                        
+                        string(name: 'buildNumber', value: "${BUILD_NUMBER}"),
+                        
+                        string(name: 'gitURL', value: "${params.gitURL}"),
+                        string(name: 'gitBranch', value: "${params.gitBranch}"),
+                        string(name: 'gitAppFolder', value: "${params.gitAppFolder}"),
+                        
+                        string(name: 'mavenProxyFile', value: "${params.mavenProxyFile}"),
+                        string(name: 'appCoordinate', value: jobVar.appCoordinate ),
+                        
+                  
+                      ]
+                    )
 
         }
       }

@@ -114,14 +114,8 @@ environment {
             modules.helper.build( params.gitAppFolder , params.mavenProxyFile, params.buildNumber )
             modules.helper.publish( params.gitAppFolder , params.mavenProxyFile)
 
-
-
             // set this for return value
             env.APP_COORDINATE=modules.helper.getJarCoordinate( params.gitAppFolder , params.mavenProxyFile)
-
-            echo modules.helper.getJarCoordinate( params.gitAppFolder , params.mavenProxyFile)
-
-            echo env.APP_COORDINATE
           }
         }
       } 

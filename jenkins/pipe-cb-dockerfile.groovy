@@ -64,20 +64,9 @@ parameters {
 
     string(name: 'mavenProxyFile', defaultValue: '/tmp/m2/ivy-settings.xml', description: 'Location to settings.xml')
     string(name: 'appCoordinate', defaultValue: 'com.vmware.sample.istio:book:1.0-SNAPSHOT-67', description: 'Location to settings.xml')
+
 }  
 
-environment {
-    APP_NAME = "${params.appImageName}"
-   // buildNumber = "${params.buildNumber}"
-
-
-    GIT_URL = "${params.gitURL}" 
-    GIT_BRANCH = "${params.gitBranch}"
-    GIT_APP_FOLDER = "${params.gitAppFolder}"
-
-    GIT_CRED = "gogscred"
-
-}
 
   stages {
     
@@ -89,12 +78,12 @@ environment {
               checkout(
                   [
                     $class: 'GitSCM', 
-                    branches: [[name: "*/${GIT_BRANCH}"]],
+                    branches: [[name: "*/${params.gitBranch}"]],
                     doGenerateSubmoduleConfigurations: false, extensions: [], 
                       submoduleCfg: [], 
                       userRemoteConfigs: [
                           [
-                            url: "${GIT_URL}"
+                            url: "${params.gitURL}"
                           ]
                       ]
                   ]
@@ -110,18 +99,17 @@ environment {
         steps {
           script {
             container("maven"){
-              modules.helper.pullMavenArtifact( "${params.gitAppFolder}" , "${params.mavenProxyFile}" , "${params.appCoordinate}")
+              modules.helper.pullMavenArtifact( params.gitAppFolder , params.mavenProxyFile , params.appCoordinate)
           }
         }
       }
     }  //end stage
 
-
     stage('Build and Publish Container') {            
       steps {
         script {
           container("kaniko"){
-            modules.helper.containerizeAndPush( "${params.gitAppFolder}", "${params.imagePrefix}" , "${params.appName}" , "${params.buildNumber}" )
+            modules.helper.containerizeAndPush( params.gitAppFolder, params.imagePrefix , params.appName , params.buildNumber )
 
           }
         }
