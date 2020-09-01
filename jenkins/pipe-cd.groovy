@@ -109,7 +109,7 @@ parameters {
     } //stage ends 
 
     stage('Attemp to re-tag image'){
-        when { expression { !(isSIT(params.deployEnvironment)) } }
+        when { expression { !(modules.helper.isSIT(params.deployEnvironment)) } }
 
         steps{
           container('kaniko'){
