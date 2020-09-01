@@ -109,6 +109,7 @@ def getJarCoordinate(pomFolder, proxyPath){
     returnStdout: true
   ).trim()
 
+  return appVersion
 }
 
 def pullMavenArtifact(pomFolder, proxyPath, appCoordinate){

@@ -29,7 +29,7 @@ parameters {
     // choice(name: 'typeOfBuild', choices: ['Dockerfile', 'Buildpack'], description: 'Choose the app build type,  default -  Dockerfile')
 
     //IMAGE_PREFIX
-    string(name: 'imagePrefix', defaultValue: 'robinfoe', description: 'Image prefix ( Default point to dockerhub)')
+    string(name: 'imagePrefix', defaultValue: 'docker.io/robinfoe', description: 'Image prefix ( Default point to dockerhub)')
 
     // GIT
     string(name: 'gitURL', defaultValue: 'https://github.com/robinfoe/bookstore-ms.git', description: 'Git Clone URL')
