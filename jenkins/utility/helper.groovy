@@ -59,14 +59,15 @@ def containerizeAndPush(gitAppFolder, imagePrefix, appName,  buildNumber){
 
     '--insecure',  
     '--insecure-registry',
-    '--skip-tls-verify',
     '--insecure-pull',
+    '--skip-tls-verify',
     '--skip-tls-verify-pull',
+    '--skip-tls-verify-registry',
     '--cache=false',
     
     '--destination="' + imageLoc  + '"',
     
-    '--verbosity=info'
+    '--verbosity=debug'
   ]
 
   sh '/kaniko/executor ' + kanikoParams.join(' ')
