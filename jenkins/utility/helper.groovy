@@ -125,16 +125,19 @@ def retagImage(fromImage , toImage){
   def kanikoParams = [
 
     '--dockerfile /dev/stdin',
+    
     '--insecure',  
     '--insecure-registry',
-    '--skip-tls-verify',
     '--insecure-pull',
+    '--skip-tls-verify',
     '--skip-tls-verify-pull',
+    '--skip-tls-verify-registry',
     '--cache=false',
+
     
     '--destination="' + toImage  + '"',
     
-    '--verbosity=info'
+    '--verbosity=debug'
   ]
 
   sh 'echo "FROM '+fromImage+'" | /kaniko/executor ' + kanikoParams.join(' ')
